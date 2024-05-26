@@ -1,0 +1,1736 @@
+// AITicTacToe (AI)
+
+import java.util.Scanner;
+
+public class TicTacToe {
+    static char[][] board = {
+        {' ', ' ', ' '},
+        {' ', ' ', ' '},
+        {' ', ' ', ' '}  
+    };
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            printBoard();
+            playerMove(scanner);
+            if (isGameOver()) {
+                break;
+            }
+            aiMove();
+            if (isGameOver()) {
+                break;
+            } 
+        }
+        scanner.close();
+    }
+
+    static void playerMove(Scanner scanner) {
+        while (true) {
+            System.out.println("Enter your move (row and column): ");
+            int row = scanner.nextInt();
+            int col = scanner.nextInt();
+            if (row >= 0 && col >= 0 && row < 3 && col < 3 && board[row][col] == ' ') {
+                board[row][col] = 'X';
+                break;
+            } else {
+                System.out.println("This move is not valid");
+            }
+        }
+    }
+
+    static void aiMove() {
+        int[] bestMove = findBestMove();
+        board[bestMove[0]][bestMove[1]] = 'O';
+    }
+
+    static int[] findBestMove() {
+        int bestScore = Integer.MIN_VALUE;
+        int[] move = new int[2];
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == ' ') {
+                    board[i][j] = 'O';
+                    int score = minimax(board, 0, false);
+                    board[i][j] = ' ';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move[0] = i;
+                        move[1] = j;
+                    }
+                }
+            }
+        }
+
+        return move;
+    }
+
+    static int minimax(char[][] board, int depth, boolean isMaximizing) {
+        char result = checkWinner();
+        if (result != ' ') {
+            return score(result);
+        }
+
+        if (isMaximizing) {
+            int bestScore = Integer.MIN_VALUE;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == ' ') {
+                        board[i][j] = 'O';
+                        int score = minimax(board, depth + 1, false);
+                        board[i][j] = ' ';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == ' ') {
+                        board[i][j] = 'X';
+                        int score = minimax(board, depth + 1, true);
+                        board[i][j] = ' ';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+
+    static int score(char result) {
+        if (result == 'O') {
+            return 1;
+        } else if (result == 'X') {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    static char checkWinner() {
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != ' ') {
+                return board[i][0];
+            }
+            if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != ' ') {
+                return board[0][i];
+            }
+        }
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != ' ') {
+            return board[0][0];
+        }
+        if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != ' ') {
+            return board[0][2];
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == ' ') {
+                    return ' ';
+                }
+            }
+        }
+        return 'T'; // Tie
+    }
+
+    static boolean isGameOver() {
+        char result = checkWinner();
+        if (result == 'X') {
+            printBoard();
+            System.out.println("You win!");
+            return true;
+        } else if (result == 'O') {
+            printBoard();
+            System.out.println("AI wins!");
+            return true;
+        } else if (result == 'T') {
+            printBoard();
+            System.out.println("It's a tie!");
+            return true;
+        }
+        return false;
+    }
+
+    static void printBoard() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(board[i][j]);
+                if (j < 2) {
+                    System.out.print(" | ");
+                }
+            }
+            System.out.println();
+            if (i < 2) {
+                System.out.println("----------");
+            }
+        }
+    }
+}
+
+
+
+
+//NON-AI TicTacToe
+
+import java.util.Scanner;
+
+public class NonAiTicTacToe {
+
+    static int[] board = {0, 2, 2, 2, 2, 2, 2, 2, 2, 2};  // 2 represents empty, 3 represents X, 5 represents O
+
+    static boolean checkWin(int player) {
+        for (int i = 1; i <= 9; i += 3) {
+            if (board[i] == player && board[i + 1] == player && board[i + 2] == player) {
+                return true; // Win in a row
+            }
+        }
+
+        for (int i = 1; i <= 3; i++) {
+            if (board[i] == player && board[i + 3] == player && board[i + 6] == player) {
+                return true; // Win in a column
+            }
+        }
+
+        if (board[1] == player && board[5] == player && board[9] == player) {
+            return true; // Win in the main diagonal
+        }
+
+        if (board[3] == player && board[5] == player && board[7] == player) {
+            return true; // Win in the other diagonal
+        }
+
+        return false; // No win yet
+    }
+
+    // Function to check the possibility of winning for a player or machine
+    static int posswin(int p) {
+        int pos;
+        for (int i = 1; i <= 9; i += 3) {  // Check rows
+            pos = i;
+            if (board[pos] * board[pos + 1] * board[pos + 2] == p * p * 2) {
+                if (board[pos] == 2) return pos;
+                if (board[pos + 1] == 2) return pos + 1;
+                if (board[pos + 2] == 2) return pos + 2;
+            }
+        }
+
+        for (int i = 1; i <= 3; i++) {  // Check columns
+            pos = i;
+            if (board[pos] * board[pos + 3] * board[pos + 6] == p * p * 2) {
+                if (board[pos] == 2) return pos;
+                if (board[pos + 3] == 2) return pos + 3;
+                if (board[pos + 6] == 2) return pos + 6;
+            }
+        }
+
+        pos = 1;
+        if (board[pos] * board[pos + 4] * board[pos + 8] == p * p * 2) {
+            if (board[pos] == 2) return pos;
+            if (board[pos + 4] == 2) return pos + 4;
+            if (board[pos + 8] == 2) return pos + 8;
+        }
+
+        pos = 3;
+        if (board[pos] * board[pos + 2] * board[pos + 4] == p * p * 2) {
+            if (board[pos] == 2) return pos;
+            if (board[pos + 2] == 2) return pos + 2;
+            if (board[pos + 4] == 2) return pos + 4;
+        }
+
+        return 0;
+    }
+
+
+    static void makemove(int player) {
+        if (board[5] == 2) {
+            board[5] = player;
+            return;
+        }
+
+        int winningMove = posswin(player);
+        if (winningMove != 0 && board[winningMove] == 2) {
+            board[winningMove] = player;
+            return;
+        }
+
+        int blockingMove = posswin(player == 3 ? 5 : 3);
+        if (blockingMove != 0 && board[blockingMove] == 2) {
+            board[blockingMove] = player;
+            return;
+        }
+
+        int[] corners = {1, 3, 7, 9};
+        for (int i = 0; i < 4; ++i) {
+            if (board[corners[i]] == 2) {
+                board[corners[i]] = player;
+                return;
+            }
+        }
+
+        for (int i = 1; i <= 9; ++i) {
+            if (board[i] == 2) {
+                board[i] = player;
+                return;
+            }
+        }
+    }
+
+    static void displayBoard() {
+        System.out.println();
+        for (int i = 1; i <= 9; i++) {
+            if (board[i] == 2) {
+                System.out.print("_");
+            } else if (board[i] == 3) {
+                System.out.print("X");
+            } else {
+                System.out.print("O");
+            }
+
+            if (i % 3 == 0) {
+                System.out.println();
+            } else {
+                System.out.print(" | ");
+            }
+        }
+        System.out.println();
+    }
+
+    static int gameover() {
+        if (checkWin(3)) {
+            displayBoard();
+            System.out.println("Game Over. You win!");
+            return 1;
+        }
+
+        if (checkWin(5)) {
+            displayBoard();
+            System.out.println("Game Over. You lose!");
+            return 1;
+        }
+
+        for (int i = 1; i <= 9; i++) {
+            if (board[i] == 2) {
+                return 0;  // Game is not over yet
+            }
+        }
+
+        displayBoard();
+        System.out.println("Game Over. It's a draw!");
+        return 1;
+    }
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Tic Tac Toe!");
+
+        while (true) {
+            displayBoard();
+
+            int playerMove;
+            System.out.print("Enter your move (1-9): ");
+            playerMove = scanner.nextInt();
+            if (playerMove < 1 || playerMove > 9 || board[playerMove] != 2) {
+                System.out.println("Invalid move. Please choose a valid empty position.");
+                continue;
+            }
+            board[playerMove] = 3;
+
+            if (gameover() == 1) {
+                break;
+            }
+
+            makemove(5);
+
+            if (gameover() == 1) {
+                break;
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+//BFSWaterJug (uninfomred)
+
+
+import java.util.*;
+ 
+class Pair {
+    int j1, j2;      
+    List<Pair> path;  
+
+    Pair(int j1, int j2)
+    {
+        this.j1 = j1;
+        this.j2 = j2;
+        path = new ArrayList<>();
+    }
+ 
+    Pair(int j1, int j2, List<Pair> _path)
+    {
+        this.j1 = j1;
+        this.j2 = j2;
+ 
+        path = new ArrayList<>();
+        path.addAll(_path);
+        path.add(new Pair(this.j1, this.j2));
+    }
+}
+ 
+public class BFSWaterJug {
+    public static void main(String[] args)
+        throws java.lang.Exception
+    {
+        int jug1 = 4;
+        int jug2 = 3;
+        int target = 2;
+ 
+        getPathIfPossible(jug1, jug2, target);
+    }
+ 
+    private static void
+    getPathIfPossible(int jug1, int jug2, int target)
+    {
+        boolean[][] visited
+            = new boolean[jug1 + 1][jug2 + 1];
+        Queue<Pair> queue = new LinkedList<>();
+ 
+        // Initial State: Both Jugs are empty so,
+        // initialise j1 j2 as 0 and put it in the path list
+        Pair initialState = new Pair(0, 0);
+        initialState.path.add(new Pair(0, 0));
+        queue.offer(initialState);
+ 
+        while (!queue.isEmpty()) {
+            Pair curr = queue.poll();
+ 
+            // Skip already visited states and overflowing
+            // water states
+            if (curr.j1 > jug1 || curr.j2 > jug2
+                || visited[curr.j1][curr.j2])
+                continue;
+            // mark current jugs state as visited
+            visited[curr.j1][curr.j2] = true;
+ 
+            // Check if current state has already reached
+            // the target amount of water or not
+            if (curr.j1 == target || curr.j2 == target) {
+                if (curr.j1 == target) {
+                    // If in our current state, jug1 holds
+                    // the required amount of water, then we
+                    // empty the jug2 and push it into our
+                    // path.
+                    curr.path.add(new Pair(curr.j1, 0));
+                }
+                else {
+                    // else, If in our current state, jug2
+                    // holds the required amount of water,
+                    // then we empty the jug1 and push it
+                    // into our path.
+                    curr.path.add(new Pair(0, curr.j2));
+                }
+                int n = curr.path.size();
+                System.out.println(
+                    "Path of states of jugs followed is :");
+                for (int i = 0; i < n; i++)
+                    System.out.println(
+                        curr.path.get(i).j1 + " , "
+                        + curr.path.get(i).j2);
+                return;
+            }
+ 
+            // If we have not yet found the target, then we
+            // have three cases left I. Fill the jug and
+            // Empty the other II. Fill the jug and let the
+            // other remain untouched III. Empty the jug and
+            // let the other remain untouched
+            // IV. Transfer amounts from one jug to another
+ 
+            // Please refer to the table attached above to
+            // understand the cases that we are taking into
+            // consideration
+ 
+            // Now,
+            // I. Fill the jug and Empty the other
+            queue.offer(new Pair(jug1, 0, curr.path));
+            queue.offer(new Pair(0, jug2, curr.path));
+ 
+            // II. Fill the jug and let the other remain
+            // untouched
+            queue.offer(new Pair(jug1, curr.j2, curr.path));
+            queue.offer(new Pair(curr.j1, jug2, curr.path));
+ 
+            // III. Empty the jug and let the other remain
+            // untouched
+            queue.offer(new Pair(0, curr.j2, curr.path));
+            queue.offer(new Pair(curr.j1, 0, curr.path));
+ 
+            // IV. Transfer water from one to another until
+            // one jug becomes empty or until one jug
+            // becomes full in this process
+ 
+            // Transferring water form jug1 to jug2
+            int emptyJug = jug2 - curr.j2;
+            int amountTransferred
+                = Math.min(curr.j1, emptyJug);
+            int j2 = curr.j2 + amountTransferred;
+            int j1 = curr.j1 - amountTransferred;
+            queue.offer(new Pair(j1, j2, curr.path));
+ 
+            // Tranferring water form jug2 to jug1
+            emptyJug = jug1 - curr.j1;
+            amountTransferred = Math.min(curr.j2, emptyJug);
+            j2 = curr.j2 - amountTransferred;
+            j1 = curr.j1 + amountTransferred;
+            queue.offer(new Pair(j1, j2, curr.path));
+        }
+ 
+        System.out.println("Not Possible to obtain target");
+    }
+}
+
+//dfs (uninfomred)
+
+import java.util.*;
+
+public class DFSWaterJug {
+
+    public static int total = 0;
+
+    static class Node {
+        int x;
+        int y;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static Stack<Node> result = new Stack<Node>();
+    static boolean[][] m = new boolean[5][5];
+    static int found = 0;
+
+    static boolean solveDFS(int curj1, int curj2, int jug1, int jug2, int tx, int ty) {
+
+        // Got final case
+        if (curj1 == tx && curj2 == ty) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        total++;
+
+        // If the node is already visited
+        if (m[curj1][curj2]) {
+            return false;
+        }
+        // Marks the node as a visited
+        m[curj1][curj2] = true;
+
+        // Fill the 1st jug completely
+        if (curj1 < jug1 && solveDFS(jug1, curj2, jug1, jug2, tx, ty)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        // Fill the 2nd jug completely
+        if (curj2 < jug2 && solveDFS(curj1, jug2, jug1, jug2, tx, ty)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        //Empty the first jug
+        if (curj1 > 0 && solveDFS(0, curj2, jug1, jug2, tx, ty)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        // Empty the second jug
+        if (curj2 > 0 && solveDFS(curj1, 0, jug1, jug2, tx, ty)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        
+        if (curj1 > 0 && curj2 < jug2) {
+            boolean temp;
+            if (curj2 + curj1 <= jug2) {
+                // Empty first jug into second jug
+                temp = solveDFS(0, curj1 + curj2, jug1, jug2, tx, ty);
+            } else {
+                // Pour the water from 1st jug to 2nd jug
+                temp = solveDFS(curj1 - (jug2 - curj2), jug2, jug1, jug2, tx, ty);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+
+        if (curj2 > 0 && curj1 < jug1
+                && solveDFS(Math.min(curj1 + curj2, jug1), curj2 - Math.min(jug1, curj2), jug1, jug2, tx, ty)) {
+            boolean temp;
+
+            if (curj2 + curj1 <= jug1) {
+                // Empty the second jug into first jug
+                temp = solveDFS(curj1 + curj2, 0, jug1, jug2, tx, ty);
+            } else {
+                // Pour the water from second jug to first j
+                temp = solveDFS(jug1, curj2 - (jug1 - curj2), jug1, jug2, tx, ty);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+        m[curj1][curj2] = false;
+        return false;
+    }
+
+    // function to print the stack in reverse order
+    public static void printReverseStack(Stack<Node> stack) {
+        // base case
+        if (stack.isEmpty())
+            return;
+
+        // create temporary stack
+        Stack<Node> temporaryStack = new Stack<>();
+
+        // copy all the elements from given stack to temporary stack
+        while (stack.size() > 0) {
+            temporaryStack.push(stack.pop());
+        }
+
+        for (Node n : temporaryStack) {
+            System.out.println("(" + n.x + "," + n.y + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+
+        DFSWaterJug obj = new DFSWaterJug();
+        boolean res = solveDFS(0, 0, 4, 3, 2, 0);
+        printReverseStack(result);
+        System.out.println("Total Nodes: " + total);
+
+    }
+}
+
+
+
+//BestfirstSearch 8 puzzle (informed)
+
+
+import java.util.*;
+
+public class EightPuzzleBestFirst {
+    static class State {
+        int[][] board;
+        int x;
+        int y;
+        int heuristic;
+        State parent;
+
+        State(int[][] board, int x, int y, int heuristic, State parent) {
+            this.board = new int[3][3];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    this.board[i][j] = board[i][j];
+                }
+            }
+            this.x = x;
+            this.y = y;
+            this.heuristic = heuristic;
+            this.parent = parent;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            State state = (State) o;
+            return Arrays.deepEquals(board, state.board);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.deepHashCode(board);
+        }
+    }
+
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+
+    public static void main(String[] args) {
+        // Hardcoded initial state
+        int[][] initialStateBoard = {
+            {1, 0, 3},
+            {4, 2, 6},
+            {7, 5, 8}
+        };
+
+        // Hardcoded goal state
+        int[][] goalStateBoard = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 0}
+        };
+
+        PriorityQueue<State> pq = new PriorityQueue<>(new Comparator<State>() {
+            @Override
+            public int compare(State o1, State o2) {
+                return o1.heuristic - o2.heuristic;
+            }
+        });
+
+        int[] pos = new int[2];
+        find_zero(initialStateBoard, pos);
+        State initialState = new State(initialStateBoard, pos[0], pos[1], Manhattan(initialStateBoard), null);
+        pq.add(initialState);
+
+        State goalState = null;
+
+        while (!pq.isEmpty()) {
+            State cur = pq.poll();
+            int[][] board = cur.board;
+
+            if (Arrays.deepEquals(board, goalStateBoard)) {
+                goalState = cur;
+                break;
+            }
+
+            find_zero(board, pos);
+            int x = pos[0];
+            int y = pos[1];
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dx[k];
+                int ny = y + dy[k];
+                if (nx >= 0 && nx < 3 && ny >= 0 && ny < 3) {
+                    int[][] new_board = new int[3][3];
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            new_board[i][j] = board[i][j];
+                        }
+                    }
+                    new_board[x][y] = new_board[nx][ny];
+                    new_board[nx][ny] = 0;
+                    var newState = new State(new_board, nx, ny, Manhattan(new_board), cur);
+                    pq.add(newState);
+                }
+            }
+        }
+
+        if (goalState != null) {
+            Stack<State> path = new Stack<>();
+            State currentState = goalState;
+            while (currentState != null) {
+                path.push(currentState);
+                currentState = currentState.parent;
+            }
+
+            while (!path.isEmpty()) {
+                State state = path.pop();
+                printArr(state.board);
+            }
+        } else {
+            System.out.println("No solution found.");
+        }
+    }
+
+    static void printArr(int[][] arr) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static void find_zero(int[][] arr, int[] pos) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (arr[i][j] == 0) {
+                    pos[0] = i;
+                    pos[1] = j;
+                    return;
+                }
+            }
+        }
+    }
+
+    static int Manhattan(int[][] arr) {
+        int ans = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (arr[i][j] == 0) continue;
+                int y = (arr[i][j] - 1) % 3;
+                int x = (arr[i][j] - 1) / 3;
+                ans += Math.abs(x - i) + Math.abs(y - j);
+            }
+        }
+        return ans;
+    }
+}
+
+
+
+//EightPuzzleAStar
+
+import java.util.*;
+
+public class EightPuzzleAStar {
+    static class State {
+        int[][] board;
+        int x;
+        int y;
+        int cost;
+        int depth;
+        State parent;
+
+        State(int[][] board, int x, int y, int cost, int depth, State parent) {
+            this.board = new int[3][3];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    this.board[i][j] = board[i][j];
+                }
+            }
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
+            this.depth = depth;
+            this.parent = parent;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            State state = (State) o;
+            return Arrays.deepEquals(board, state.board);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.deepHashCode(board);
+        }
+    }
+
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+
+    public static void main(String[] args) {
+        // Hardcoded initial state
+        int[][] initialStateBoard = {
+            {1, 0, 3},
+            {4, 2, 6},
+            {7, 5, 8}
+        };
+
+        // Hardcoded goal state
+        int[][] goalStateBoard = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 0}
+        };
+
+        PriorityQueue<State> pq = new PriorityQueue<>(new Comparator<State>() {
+            @Override
+            public int compare(State o1, State o2) {
+                return o1.cost - o2.cost;
+            }
+        });
+
+        int[] pos = new int[2];
+        find_zero(initialStateBoard, pos);
+        State initialState = new State(initialStateBoard, pos[0], pos[1], Manhattan(initialStateBoard), 0, null);
+        pq.add(initialState);
+
+        State goalState = null;
+
+        while (!pq.isEmpty()) {
+            State cur = pq.poll();
+            int[][] board = cur.board;
+
+            if (Arrays.deepEquals(board, goalStateBoard)) {
+                goalState = cur;
+                break;
+            }
+
+            find_zero(board, pos);
+            int x = pos[0];
+            int y = pos[1];
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dx[k];
+                int ny = y + dy[k];
+                if (nx >= 0 && nx < 3 && ny >= 0 && ny < 3) {
+                    int[][] new_board = new int[3][3];
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            new_board[i][j] = board[i][j];
+                        }
+                    }
+                    new_board[x][y] = new_board[nx][ny];
+                    new_board[nx][ny] = 0;
+                    var newState = new State(new_board, nx, ny, Manhattan(new_board) + cur.depth + 1, cur.depth + 1, cur);
+                    pq.add(newState);
+                }
+            }
+        }
+
+        if (goalState != null) {
+            Stack<State> path = new Stack<>();
+            State currentState = goalState;
+            while (currentState != null) {
+                path.push(currentState);
+                currentState = currentState.parent;
+            }
+
+            while (!path.isEmpty()) {
+                State state = path.pop();
+                printArr(state.board);
+            }
+        } else {
+            System.out.println("No solution found.");
+        }
+    }
+
+    static void printArr(int[][] arr) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static void find_zero(int[][] arr, int[] pos) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (arr[i][j] == 0) {
+                    pos[0] = i;
+                    pos[1] = j;
+                    return;
+                }
+            }
+        }
+    }
+
+    static int Manhattan(int[][] arr) {
+        int ans = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (arr[i][j] == 0) continue;
+                int y = (arr[i][j] - 1) % 3;
+                int x = (arr[i][j] - 1) / 3;
+                ans += Math.abs(x - i) + Math.abs(y - j);
+            }
+        }
+        return ans;
+    }
+}
+
+
+
+//AO* 
+
+
+import java.util.*;
+
+public class AO {
+public static Map<String, Integer>
+	Cost(Map<String, Integer> H,
+		Map<String, List<String> > condition, int weight)
+{
+	Map<String, Integer> cost = new HashMap<>();
+	if (condition.containsKey("AND")) {
+	List<String> AND_nodes = condition.get("AND");
+	String Path_A = String.join(" AND ", AND_nodes);
+	int PathA
+		= AND_nodes.stream()
+		.mapToInt(
+		node -> H.get(node) + weight)
+		.sum();
+	cost.put(Path_A, PathA);
+	}
+	if (condition.containsKey("OR")) {
+	List<String> OR_nodes = condition.get("OR");
+	String Path_B = String.join(" OR ", OR_nodes);
+	int PathB
+		= OR_nodes.stream()
+		.mapToInt(
+		node -> H.get(node) + weight)
+		.min()
+		.getAsInt();
+	cost.put(Path_B, PathB);
+	}
+	return cost;
+}
+
+public static Map<String, Map<String, Integer> >
+	UpdateCost(
+	Map<String, Integer> H,
+	Map<String, Map<String, List<String> > > Conditions,
+	int weight)
+{
+	List<String> Main_nodes
+	= new ArrayList<>(Conditions.keySet());
+	Collections.reverse(Main_nodes);
+	Map<String, Map<String, Integer> > least_cost
+	= new HashMap<>();
+	for (String key : Main_nodes) {
+	Map<String, List<String> > condition
+		= Conditions.get(key);
+	System.out.printf("%s: %s >>> %s%n", key,
+						condition,
+						Cost(H, condition, weight));
+	Map<String, Integer> c
+		= Cost(H, condition, weight);
+	H.put(key, Collections.min(c.values()));
+	least_cost.put(key, Cost(H, condition, weight));
+	}
+	return least_cost;
+}
+
+public static String ShortestPath(
+	String Start,
+	Map<String, Map<String, Integer> > Updated_cost,
+	Map<String, Integer> H)
+{
+	String Path = Start;
+	if (Updated_cost.containsKey(Start)) {
+	int Min_cost = Collections.min(
+		Updated_cost.get(Start).values());
+	List<String> key = new ArrayList<>(
+		Updated_cost.get(Start).keySet());
+	List<Integer> values = new ArrayList<>(
+		Updated_cost.get(Start).values());
+	int Index = values.indexOf(Min_cost);
+	List<String> Next
+		= Arrays.asList(key.get(Index).split(" "));
+	if (Next.size() == 1) {
+		Start = Next.get(0);
+		Path += "<--"
+		+ ShortestPath(Start, Updated_cost,
+						H);
+	}
+	else {
+		Path += "<--(" + key.get(Index) + ") ";
+		Start = Next.get(0);
+		Path += "["
+		+ ShortestPath(Start, Updated_cost,
+						H)
+		+ " + ";
+		Start = Next.get(Next.size() - 1);
+		Path += ShortestPath(Start, Updated_cost, H)
+		+ "]";
+	}
+	}
+	return Path;
+}
+
+public static void main(String[] args)
+{
+	Map<String, Integer> H = new HashMap<>();
+	H.put("A", -1);
+	H.put("B", 5);
+	H.put("C", 2);
+	H.put("D", 4);
+	H.put("E", 7);
+	H.put("F", 9);
+	H.put("G", 3);
+	H.put("H", 0);
+	H.put("I", 0);
+	H.put("J", 0);
+
+	Map<String, Map<String, List<String> > > Conditions
+	= new HashMap<>();
+	Map<String, List<String> > aConditions
+	= new HashMap<>();
+	aConditions.put("OR", Arrays.asList("B"));
+	aConditions.put("AND", Arrays.asList("C", "D"));
+	Conditions.put("A", aConditions);
+	Map<String, List<String> > bConditions
+	= new HashMap<>();
+	bConditions.put("OR", Arrays.asList("E", "F"));
+	Conditions.put("B", bConditions);
+
+	Map<String, List<String> > cConditions
+	= new HashMap<>();
+	cConditions.put("OR", Arrays.asList("G"));
+	cConditions.put("AND", Arrays.asList("H", "I"));
+	Conditions.put("C", cConditions);
+
+	Map<String, List<String> > dConditions
+	= new HashMap<>();
+	dConditions.put("OR", Arrays.asList("J"));
+	Conditions.put("D", dConditions);
+
+	// weight
+	int weight = 1;
+
+	// Updated cost
+	System.out.println("Updated Cost :");
+	Map<String, Map<String, Integer> > Updated_cost
+	= UpdateCost(H, Conditions, weight);
+	System.out.println("*".repeat(75));
+	System.out.println("Shortest Path :");
+	System.out.println(
+	ShortestPath("A", Updated_cost, H));
+}
+}
+
+
+
+//hillclimbing 
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+class Point {
+    int x, y, n;
+
+    Point(int x, int y, int n) {
+        this.x = x;
+        this.y = y;
+        this.n = n;
+    }
+
+    int manhattan(Point other) {
+        return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+    }
+
+    List<Point> generateCentre() {
+        List<Point> centres = new ArrayList<>();
+        int[][] directions = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+        for (int[] d : directions) {
+            int newX = this.x + d[0];
+            int newY = this.y + d[1];
+            if (newX >= 0 && newX <= n && newY >= 0 && newY <= n) {
+                centres.add(new Point(newX, newY, n));
+            }
+        }
+        return centres;
+    }
+
+    @Override
+    public String toString() {
+        return "(x, y) = (" + x + ", " + y + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Point point = (Point) obj;
+        return x == point.x && y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * x + y;
+    }
+}
+
+public class ManhattanCentre {
+    static Set<Point> visited = new HashSet<>();
+
+    public static void main(String[] args) {
+        int n = 9;  // Grid dimension
+
+        // Hardcoded coordinates of points
+        int[][] coordinates = {
+            {1, 1},
+            {9, 4},
+            {4, 6},
+            {2, 5},
+            {7, 7}
+        };
+
+        List<Point> pointsList = new ArrayList<>();
+        for (int[] coordinate : coordinates) {
+            pointsList.add(new Point(coordinate[0], coordinate[1], n));
+        }
+
+        Point initialCentre = new Point(0, 0, n);
+        findCentre(pointsList, n, initialCentre);
+    }
+
+    static void findCentre(List<Point> pointsList, int n, Point centre) {
+        visited.add(centre);
+        System.out.println("\n--------------------------------------------------------------");
+        System.out.println("Current centre: " + centre);
+        System.out.println("Sum of manhattan distances (centre) :" + sum(pointsList, centre));
+
+        List<Point> newCentres = centre.generateCentre();
+        newCentres.removeAll(visited);  // Remove already visited centres
+
+        System.out.println("\nNew centres: ");
+        for (Point pt : newCentres) {
+            System.out.println(pt);
+        }
+
+        List<Integer> distances = new ArrayList<>();
+        for (Point pt : newCentres) {
+            distances.add(sum(pointsList, pt));
+        }
+
+        System.out.println("Sum of manhattan distances from new centres: " + distances);
+
+        int currentSum = sum(pointsList, centre);
+        if (!distances.isEmpty()) {
+            int minDistance = distances.stream().min(Integer::compareTo).orElse(currentSum);
+            if (minDistance < currentSum) {
+                Point newCentre = newCentres.get(distances.indexOf(minDistance));
+                findCentre(pointsList, n, newCentre);
+            } else {
+                System.out.println("Finalized Minimal centre: " + centre);
+                System.out.println("Cost: " + currentSum);
+            }
+        } else {
+            System.out.println("Finalized Minimal centre: " + centre);
+            System.out.println("Cost: " + currentSum);
+        }
+    }
+
+    static int sum(List<Point> pointsList, Point centre) {
+        return pointsList.stream().mapToInt(pt -> centre.manhattan(pt)).sum();
+    }
+}
+
+//MissionariesAndCannibals (bredth first search)
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+
+public class MissionariesAndCannibals {
+	
+	HashMap<ArrayList<Integer>, HashSet<ArrayList<Integer>>> map = new HashMap<ArrayList<Integer>, HashSet<ArrayList<Integer>>>();
+	Queue<ArrayList<Integer>> searchSpace = new LinkedList<ArrayList<Integer>>();
+	public int MISSIONARIES;
+	public int CANNIBALS;
+	
+	
+	/**
+	 * Takes in an input of missionaries and cannibals, and tells the user all the possible states, and all the states connected to those possible states
+	 * The output is formatted as so
+	 * [state]: (possible connecting state 1) (possible connecting state 2) ect...
+	 * The program also says if there's a possible end state where all the people reach the other end of the river
+	 * @param missioanries the number of starting missionaries
+	 * @param cannibals the number of starting cannibals
+	 */
+	public MissionariesAndCannibals(int missioanries, int cannibals) {
+		MISSIONARIES = missioanries;
+		CANNIBALS = cannibals;
+		
+		ArrayList<Integer> initalState = new ArrayList<Integer>();
+		initalState.add(MISSIONARIES);
+		initalState.add(CANNIBALS);
+		initalState.add(1);
+		searchSpace.add(initalState);
+		map.put(initalState, new HashSet<ArrayList<Integer>>());
+		int nextSide = -1;
+		while(!searchSpace.isEmpty()) {
+			ArrayList<Integer> currentState = searchSpace.poll();
+			if(currentState.get(2) == 0)
+				nextSide = 1;
+			else
+				nextSide = 0;
+			for (int i = 0; i <= MISSIONARIES; i++) {
+				for (int j = 0; j <= CANNIBALS; j++) {
+					if(possibleState(currentState,i,j) && validState(i,j) && !(i == currentState.get(0) && j == currentState.get(1))){
+						ArrayList<Integer> newSpace = new ArrayList<Integer>();
+						newSpace.add(i);
+						newSpace.add(j);
+						newSpace.add(nextSide);
+						// System.out.print("Adding: ");
+						// for (int num : newSpace){
+						// 	System.out.print(num + " ");
+						// }
+						// System.out.print(" for previous state:");
+						// for (int num : currentState){
+						// 	System.out.print(num + " ");
+						// }
+						// System.out.println();
+						
+						if(map.get(newSpace) == null) {
+//							System.out.println("state does not exist, adding");
+							HashSet<ArrayList<Integer>> toAdd = new  HashSet<ArrayList<Integer>>();
+							toAdd.add(currentState);
+							map.put(newSpace, toAdd);
+							searchSpace.add(newSpace);
+						} else {
+//							System.out.println("Found existing");
+							map.get(newSpace).add(currentState);
+						}
+					}
+				}
+				
+			}
+			
+		}
+		for (ArrayList<Integer> key : map.keySet()) {
+			System.out.print("[ ");
+			for (int num : key){
+				System.out.print(num + " ");
+			}
+			System.out.print("]: ");
+			for (ArrayList<Integer> value : map.get(key)){
+				System.out.print("(");
+				for (int value_num : value){
+					System.out.print(value_num + " ");
+				}
+				System.out.print(") ");
+			}
+			System.out.println();
+		}
+	
+		ArrayList<Integer> testGoal = new ArrayList<Integer>();
+		testGoal.add(0);
+		testGoal.add(0);
+		testGoal.add(0);
+		if (map.get(testGoal) != null) {
+			System.out.println("Has possible goal state");
+		} else
+			System.out.println("No possible goal state");
+	}
+
+	/**
+	 * Returns if this state is possible to get to from the current state(that is, only less than 2 difference from the current state)
+	 */
+	private boolean possibleState(ArrayList<Integer> currentState, int i, int j) {
+		if (Math.abs(currentState.get(0) - i) + Math.abs(currentState.get(1) - j) <= 2)
+			if (currentState.get(2) == 1) {
+				return (i <= currentState.get(0) && j <= currentState.get(1));
+			} else { //the side is 0
+				return (i >= currentState.get(0) && j >= currentState.get(1));
+			}
+		return false;
+	}
+	/**
+	 * Returns true if this state is a valid state(that is, missionaries will not get eaten)
+	 */
+	private boolean validState(int i, int j) {
+		if ((i >= j || i == 0) && ((MISSIONARIES - i >= CANNIBALS - j) || (MISSIONARIES - i == 0))) //check if left side is valid AND right side is valid
+			return true;
+			else
+			return false;
+	}
+	public static void main(String[] args) {
+		new MissionariesAndCannibals(3,2);
+	}
+
+}
+
+
+//csp graph color 
+
+// A Java program to implement greedy algorithm for graph coloring
+import java.io.*;
+import java.util.*;
+import java.util.LinkedList;
+
+// This class represents an undirected graph using adjListacency list
+public class Graph
+{
+	private int numOfVertices; // No. of vertices
+	private LinkedList<Integer> adjList[]; //Adjacency List
+
+	//Constructor
+	Graph(int v)
+	{
+		numOfVertices = v;
+		adjList = new LinkedList[v];
+		for (int i=0; i<v; ++i)
+			adjList[i] = new LinkedList();
+	}
+
+	//Function to add an edge into the graph
+	void insertEdge(int v,int w)
+	{
+		adjList[v].add(w);
+		adjList[w].add(v); //Graph is undirected
+	}
+
+	// Assigns colors (starting from 0) to all vertices and
+	// prints the assignment of colors
+	void graphColouring()
+	{
+		int arr[] = new int[numOfVertices];
+
+		// Initialize all vertices as unassigned
+		Arrays.fill(arr, -1);
+
+		// Assign the first color to first vertex
+		arr[0] = 0;
+
+		// A temporary array to store the available colors. False
+		// value of available[cr] would mean that the color cr is
+		// assigned to one of its adjListacent vertices
+		boolean available[] = new boolean[numOfVertices];
+		
+		// Initially, all colors are available
+		Arrays.fill(available, true);
+
+		// Assign colors to remaining numOfVertices-1 vertices
+		for (int u = 1; u < numOfVertices; u++)
+		{
+			// Process all adjListacent vertices and flag their colors
+			// as unavailable
+			Iterator<Integer> it = adjList[u].iterator() ;
+			while (it.hasNext())
+			{
+				int i = it.next();
+				if (arr[i] != -1)
+					available[arr[i]] = false;
+			}
+
+			// Find the first available color
+			int cr;
+			for (cr = 0; cr < numOfVertices; cr++){
+				if (available[cr])
+					break;
+			}
+
+			arr[u] = cr; // Assign the found color
+
+			// Reset the values back to true for the next iteration
+			Arrays.fill(available, true);
+		}
+
+		// print the arr
+		for (int u = 0; u < numOfVertices; u++)
+			System.out.println("numOfVerticesertex " + u + " ---> Color "
+								+ arr[u]);
+	}
+
+	// Driver method
+	public static void main(String args[])
+	{
+		Graph g1 = new Graph(5);
+		g1.insertEdge(0, 1);
+		g1.insertEdge(1, 2);
+		g1.insertEdge(0, 2);
+		g1.insertEdge(1, 3);
+		g1.insertEdge(0, 4);
+		System.out.println("Coloring of graph 1");
+		g1.graphColouring();
+
+	}
+}
+
+
+//EightPuzzleBFS
+
+import java.util.*;
+
+class PuzzleState {
+    int[][] board;
+    int x, y; // Coordinates of the blank space (0)
+    PuzzleState parent; // To track the path to the solution
+
+    public PuzzleState(int[][] board, int x, int y, PuzzleState parent) {
+        this.board = new int[board.length][board.length];
+        for (int i = 0; i < board.length; i++) {
+            this.board[i] = board[i].clone();
+        }
+        this.x = x;
+        this.y = y;
+        this.parent = parent;
+    }
+
+    // Check if this state is the goal state
+    public boolean isGoal() {
+        int[][] goal = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 0}
+        };
+        return Arrays.deepEquals(this.board, goal);
+    }
+
+    // Generate successors of the current state
+    public List<PuzzleState> generateSuccessors() {
+        List<PuzzleState> successors = new ArrayList<>();
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+
+        for (int i = 0; i < 4; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (isInBounds(newX, newY)) {
+                int[][] newBoard = copyBoard(this.board);
+                swap(newBoard, x, y, newX, newY);
+                successors.add(new PuzzleState(newBoard, newX, newY, this));
+            }
+        }
+
+        return successors;
+    }
+
+    // Check if coordinates are within bounds of the board
+    private boolean isInBounds(int x, int y) {
+        return x >= 0 && x < board.length && y >= 0 && y < board.length;
+    }
+
+    // Swap the values in the board
+    private void swap(int[][] board, int x1, int y1, int x2, int y2) {
+        int temp = board[x1][y1];
+        board[x1][y1] = board[x2][y2];
+        board[x2][y2] = temp;
+    }
+
+    // Create a copy of the board
+    private int[][] copyBoard(int[][] board) {
+        int[][] newBoard = new int[board.length][];
+        for (int i = 0; i < board.length; i++) {
+            newBoard[i] = board[i].clone();
+        }
+        return newBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PuzzleState that = (PuzzleState) o;
+        return Arrays.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+}
+
+public class EightPuzzleBFS {
+    public static void main(String[] args) {
+        int[][] initialBoard = {
+            {1, 0, 3},
+            {4, 2, 5},
+            {7, 8, 6}
+        };
+
+        PuzzleState initialState = new PuzzleState(initialBoard, 1, 1, null);
+        if (bfs(initialState)) {
+            System.out.println("Solution found.");
+        } else {
+            System.out.println("No solution exists.");
+        }
+    }
+
+    public static boolean bfs(PuzzleState initialState) {
+        Queue<PuzzleState> frontier = new LinkedList<>();
+        Set<PuzzleState> explored = new HashSet<>();
+        int nodesVisited = 0;
+        int branches = 0;
+
+        frontier.add(initialState);
+
+        while (!frontier.isEmpty()) {
+            PuzzleState current = frontier.poll();
+            explored.add(current);
+            nodesVisited++;
+
+            if (current.isGoal()) {
+                System.out.println("Total nodes visited: " + nodesVisited);
+                System.out.println("Total cost (depth of solution): " + getDepth(current));
+                System.out.println("Number of branches: " + branches);
+                printSolutionPath(current);
+                return true;
+            }
+
+            List<PuzzleState> successors = current.generateSuccessors();
+            branches += successors.size();
+            for (PuzzleState successor : successors) {
+                if (!explored.contains(successor) && !frontier.contains(successor)) {
+                    frontier.add(successor);
+                }
+            }
+
+            System.out.println("Frontier size: " + frontier.size());
+        }
+
+        return false;
+    }
+
+    // Get the depth of the solution by counting the number of parents
+    private static int getDepth(PuzzleState state) {
+        int depth = 0;
+        while (state.parent != null) {
+            depth++;
+            state = state.parent;
+        }
+        return depth;
+    }
+
+    // Print the path from the initial state to the goal state
+    private static void printSolutionPath(PuzzleState state) {
+        List<PuzzleState> path = new ArrayList<>();
+        while (state != null) {
+            path.add(state);
+            state = state.parent;
+        }
+        Collections.reverse(path);
+        for (PuzzleState step : path) {
+            printBoard(step.board);
+            System.out.println();
+        }
+    }
+
+    // Print the board
+    private static void printBoard(int[][] board) {
+        for (int[] row : board) {
+            for (int val : row) {
+                System.out.print(val + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+//insect identification prolog
+
+insect(ant, small, brown, six_legs, no_wings, social, ground).
+insect(ant, small, black, six_legs, no_wings, social, ground).
+insect(bee, small, yellow, six_legs, two_wings, social, flowers).
+insect(butterfly, small, colorful, six_legs, two_wings, solitary, gardens).
+insect(spider, tiny, brown, eight_legs, no_wings, solitary, house).
+insect(ladybug, small, red, six_legs, two_wings, solitary, plants).
+insect(mosquito, small, gray, six_legs, two_wings, solitary, wetlands).
+insect(grasshopper, medium, green, six_legs, two_wings, solitary, grassy_fields).
+insect(beetle, small, black, six_legs, two_wings, solitary, forests).
+insect(praying_mantis, medium, green, six_legs, two_wings, solitary, gardens).
+insect(dragonfly, medium, iridescent, six_legs, two_wings, solitary, ponds).
+insect(centipede, medium, brown, many_legs, no_wings, solitary, dark_damp_places).
+insect(fly, small, black, six_legs, two_wings, solitary, various).
+insect(wasp, small, black_and_yellow, six_legs, two_wings, solitary, nests).
+insect(ant, small, red, six_legs, no_wings, social, ground).
+insect(bumblebee, medium, black_and_yellow, six_legs, two_wings, social, flowers).
+insect(damselfly, small, blue, six_legs, two_wings, solitary, ponds).
+insect(firefly, small, bioluminescent, six_legs, two_wings, solitary, fields).
+insect(earwig, small, dark_brown, six_legs, two_wings, solitary, dark_damp_places).
+
+identify_insect(Color, Size, Legs, Wings, Social, Habitat, Insect) :-
+    insect(Insect, Size, Color, Legs, Wings, Social, Habitat).
+
+start :-
+    write('Welcome to the Insect Identifier!'), nl,
+    write('Please describe the insect you want to identify.'), nl,
+    write('What is the color of the insect? '), read(Color), nl,
+    write('What is the size of the insect (small, medium, large)? '), read(Size), nl,
+    write('How many legs does the insect have? (six_legs, eight_legs or many_legs?)'), read(Legs), nl,
+    write('How many wings does the insect have? (two_wings or no_wings)? '), read(Wings), nl,
+    write('Is the insect social (social or solitary)? '), read(Social), nl,
+    write('Where is the insect commonly found (e.g., "forests," "flowers", "various")? '), read(Habitat), nl,
+    identify_insect(Color, Size, Legs, Wings, Social, Habitat, Insect),
+    (
+        Insect \= [] -> write('Based on your description, the insect may be a '), write(Insect), nl
+        ; write('No insect identified based on your given information'), nl
+    ).
+
+
+//family tree 
+
+% Male and Female relationships
+male(varad).
+father(prashant, varad).
+mother(sarika, varad).
+female(sunanda).
+female(manjusha).
+female(kavita).
+female(madhu).
+female(shruti).
+female(gauri).
+female(riya).
+female(shreya).
+female(jui).
+female(munni).
+female(shraddha).
+female(swapna).
+female(nirmala).
+female(sia).
+
+% Grandparent relationships
+grandfather(purushuttam, varad).
+grandfather(chandrakant, varad).
+grandmother(sunanda, varad).
+grandmother(nirmala, varad).
+
+% Aunt and Uncle relationships
+aunt(manjusha, varad).
+aunt(kavita, varad).
+aunt(madhu, varad).
+aunt(munni, varad).
+aunt(shraddha, varad).
+aunt(swapna, varad).
+uncle(shekhar, varad).
+uncle(mayur, varad).
+uncle(ankush, varad).
+uncle(jai, varad).
+uncle(nikhil, varad).
+uncle(karan, varad).
+
+% Cousin relationships
+cousin(shruti, varad).
+cousin(gauri, varad).
+cousin(riya, varad).
+cousin(shreya, varad).
+cousin(jui, varad).
+cousin(aniket, varad).
+cousin(nimish, varad).
+cousin(arnav, varad).
+
+% Third aunt's family
+husband(nikhil, shreya).
+husband(karan, jui).
+child(sia, shreya).
+
+% Parent relationships
+parent(prashant, varad).
+parent(sarika, varad).
+
+% Niece relationships
+niece(sia, varad).
+
+% Sibling relationships
+sibling(shruti, gauri).
+sibling(jui, shreya).
+
+% Marital relationships
+married(prashant, sarika).
+married(nikhil, shreya).
+married(karan, jui).
+married(shekhar, manjusha).
+married(shekhar, madhu).
+married(ankush, shraddha).
+married(jai, swapna).
+married(munni, mayur).
+
+% Additional rules for family relationships
+mother_of(X, Y) :- mother(X, Y).
+father_of(X, Y) :- father(X, Y).
+sister_of(X, Y) :- female(X), sibling(X, Y).
+grandparent_of(X, Y) :- (grandfather(X, Y); grandmother(X, Y)).
+aunt_of(X, Y) :- female(X), (sister_of(X, Z), parent_of(Z, Y); married(X, Z), sibling(Z, W), parent_of(W, Y)).
+uncle_of(X, Y) :- male(X), (brother_of(X, Z), parent_of(Z, Y); married(X, Z), sibling(Z, W), parent_of(W, Y)).
+cousin_of(X, Y) :-(aunt_of(Z, Y); uncle_of(Z, Y)), parent(Z, X), X \= Y.
+
+
