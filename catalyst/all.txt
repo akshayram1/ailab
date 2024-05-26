@@ -1,4 +1,4 @@
-// AITicTacToe (AI)
+// AI TicTacToe (AI)
 
 import java.util.Scanner;
 
@@ -173,7 +173,10 @@ public class TicTacToe {
 
 
 
-//NON-AI TicTacToe
+
+
+
+//  NON-AI TicTacToe
 
 import java.util.Scanner;
 
@@ -356,7 +359,11 @@ public class NonAiTicTacToe {
 
 
 
-//BFSWaterJug (uninfomred)
+
+
+
+
+// BFSWaterJug (uninfomred)
 
 
 import java.util.*;
@@ -495,7 +502,14 @@ public class BFSWaterJug {
     }
 }
 
-//dfs (uninfomred)
+
+
+
+
+
+
+
+//DFS Water Jug (uninfomred)
 
 import java.util.*;
 
@@ -625,7 +639,14 @@ public class DFSWaterJug {
 
 
 
-//BestfirstSearch 8 puzzle (informed)
+
+
+
+
+
+
+
+// Best first Search 8 puzzle (informed)
 
 
 import java.util.*;
@@ -782,7 +803,446 @@ public class EightPuzzleBestFirst {
 
 
 
-//EightPuzzleAStar
+
+
+
+
+
+//BFS & DFS Monkey Banana Problem
+
+import java.util.*;
+
+class State {
+    int monkeyPosition;
+    int chairPosition;
+    int bananaPosition;
+
+    State(int monkeyPosition, int chairPosition, int bananaPosition) {
+        this.monkeyPosition = monkeyPosition;
+        this.chairPosition = chairPosition;
+        this.bananaPosition = bananaPosition;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        State state = (State) obj;
+        return monkeyPosition == state.monkeyPosition &&
+                chairPosition == state.chairPosition &&
+                bananaPosition == state.bananaPosition;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(monkeyPosition, chairPosition, bananaPosition);
+    }
+}
+
+public class MonkeyBananaProblem {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter initial position for Monkey (0 or 1 or 2):");
+        int initialMonkeyPosition = scanner.nextInt();
+
+        System.out.println("Enter initial position for Chair (0 or 1):");
+        int initialChairPosition = scanner.nextInt();
+
+        System.out.println("Enter initial position for Banana (0 or 1 or 2):");
+        int initialBananaPosition = scanner.nextInt();
+
+        State initialState = new State(initialMonkeyPosition, initialChairPosition, initialBananaPosition);
+
+        System.out.println("Choose algorithm: (1) BFS, (2) DFS");
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                System.out.println("BFS Solution:");
+                bfs(initialState);
+                break;
+            case 2:
+                System.out.println("DFS Solution:");
+                dfs(initialState, new HashSet<>());
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+
+    public static void bfs(State initialState) {
+        Queue<State> queue = new LinkedList<>();
+        Set<State> visited = new HashSet<>();
+
+        queue.add(initialState);
+        visited.add(initialState);
+
+        while (!queue.isEmpty()) {
+            State currentState = queue.poll();
+            if (isGoalState(currentState)) {
+                printSolution(currentState);
+                return;
+            }
+
+            List<State> nextStates = generateNextStates(currentState);
+            for (State nextState : nextStates) {
+                if (!visited.contains(nextState)) {
+                    queue.add(nextState);
+                    visited.add(nextState);
+                }
+            }
+        }
+
+        System.out.println("No solution found.");
+    }
+
+    public static void dfs(State currentState, Set<State> visited) {
+        if (isGoalState(currentState)) {
+            printSolution(currentState);
+            return;
+        }
+
+        visited.add(currentState);
+        List<State> nextStates = generateNextStates(currentState);
+
+        for (State nextState : nextStates) {
+            if (!visited.contains(nextState)) {
+                dfs(nextState, visited);
+            }
+        }
+    }
+
+    public static boolean isGoalState(State state) {
+        return state.monkeyPosition == state.bananaPosition;
+    }
+
+    public static List<State> generateNextStates(State currentState) {
+        List<State> nextStates = new ArrayList<>();
+
+        // Monkey moves
+        if (currentState.monkeyPosition < 2) {
+            nextStates.add(new State(currentState.monkeyPosition + 1, currentState.chairPosition,
+                    currentState.bananaPosition));
+        }
+
+        if (currentState.monkeyPosition > 0) {
+            nextStates.add(new State(currentState.monkeyPosition - 1, currentState.chairPosition,
+                    currentState.bananaPosition));
+        }
+
+        // Chair moves
+        nextStates.add(
+                new State(currentState.monkeyPosition, 1 - currentState.chairPosition, currentState.bananaPosition));
+
+        // Monkey climbs the chair
+        if (currentState.monkeyPosition == currentState.chairPosition
+                && currentState.monkeyPosition == currentState.bananaPosition) {
+            nextStates
+                    .add(new State(currentState.chairPosition, currentState.chairPosition, currentState.chairPosition));
+        }
+
+        return nextStates;
+    }
+
+    public static void printSolution(State state) {
+        System.out.println("Monkey reached the banana successfully!");
+        System.out.println("Monkey Position: " + state.monkeyPosition);
+        System.out.println("Chair Position: " + state.chairPosition);
+        System.out.println("Banana Position: " + state.bananaPosition);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// DLS Depth Limited Search Algorithm Water Jug
+
+import java.util.*;
+
+public class DLSWaterJug {
+
+    public static int total = 0;
+
+    static class Node {
+        int x;
+        int y;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static Stack<Node> result = new Stack<Node>();
+    static boolean[][] m = new boolean[5][5];
+    static int found = 0;
+
+    static boolean solveDLS(int curj1, int curj2, int jug1, int jug2, int tx, int ty, int depth, int limit) {
+
+        // Got final case
+        if (curj1 == tx && curj2 == ty) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        total++;
+
+        // If the depth limit is reached
+        if (depth > limit) {
+            return false;
+        }
+
+        // If the node is already visited
+        if (m[curj1][curj2]) {
+            return false;
+        }
+        // Marks the node as a visited
+        m[curj1][curj2] = true;
+
+        // Fill the 1st jug completely
+        if (curj1 < jug1 && solveDLS(jug1, curj2, jug1, jug2, tx, ty, depth + 1, limit)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        // Fill the 2nd jug completely
+        if (curj2 < jug2 && solveDLS(curj1, jug2, jug1, jug2, tx, ty, depth + 1, limit)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        // Empty the first jug
+        if (curj1 > 0 && solveDLS(0, curj2, jug1, jug2, tx, ty, depth + 1, limit)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        // Empty the second jug
+        if (curj2 > 0 && solveDLS(curj1, 0, jug1, jug2, tx, ty, depth + 1, limit)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (curj1 > 0 && curj2 < jug2) {
+            boolean temp;
+            if (curj2 + curj1 <= jug2) {
+                // Empty first jug into second jug
+                temp = solveDLS(0, curj1 + curj2, jug1, jug2, tx, ty, depth + 1, limit);
+            } else {
+                // Pour the water from 1st jug to 2nd jug
+                temp = solveDLS(curj1 - (jug2 - curj2), jug2, jug1, jug2, tx, ty, depth + 1, limit);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+
+        if (curj2 > 0 && curj1 < jug1) {
+            boolean temp;
+            if (curj2 + curj1 <= jug1) {
+                // Empty the second jug into first jug
+                temp = solveDLS(curj1 + curj2, 0, jug1, jug2, tx, ty, depth + 1, limit);
+            } else {
+                // Pour the water from second jug to first jug
+                temp = solveDLS(jug1, curj2 - (jug1 - curj2), jug1, jug2, tx, ty, depth + 1, limit);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+
+        m[curj1][curj2] = false;
+        return false;
+    }
+
+    // function to print the stack in reverse order
+    public static void printReverseStack(Stack<Node> stack) {
+        // base case
+        if (stack.isEmpty())
+            return;
+
+        // create temporary stack
+        Stack<Node> temporaryStack = new Stack<>();
+
+        // copy all the elements from given stack to temporary stack
+        while (stack.size() > 0) {
+            temporaryStack.push(stack.pop());
+        }
+
+        for (Node n : temporaryStack) {
+            System.out.println("(" + n.x + "," + n.y + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+        DLSWaterJug obj = new DLSWaterJug();
+        int depthLimit = 5; // Set a reasonable depth limit
+        boolean res = solveDLS(0, 0, 4, 3, 2, 0, 0, depthLimit);
+        if (res) {
+            printReverseStack(result);
+        } else {
+            System.out.println("Solution not found within depth limit.");
+        }
+        System.out.println("Total Nodes: " + total);
+    }
+}
+
+
+
+
+
+
+// iterative deepning search (IDS) water jug problem
+
+import java.util.*;
+
+public class IDDFSWaterJug {
+
+    static class Node {
+        int x;
+        int y;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static boolean[][] visited = new boolean[5][5];
+    static Stack<Node> result = new Stack<Node>();
+    static int totalNodesVisited = 0;
+
+    // Depth-limited DFS
+    static boolean solveDFS(int curj1, int curj2, int jug1, int jug2, int tx, int ty, int depth) {
+        if (curj1 == tx && curj2 == ty) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (depth == 0)
+            return false;
+
+        visited[curj1][curj2] = true;
+        totalNodesVisited++;
+
+        if (curj1 < jug1 && solveDFS(jug1, curj2, jug1, jug2, tx, ty, depth - 1)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (curj2 < jug2 && solveDFS(curj1, jug2, jug1, jug2, tx, ty, depth - 1)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (curj1 > 0 && solveDFS(0, curj2, jug1, jug2, tx, ty, depth - 1)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (curj2 > 0 && solveDFS(curj1, 0, jug1, jug2, tx, ty, depth - 1)) {
+            result.push(new Node(curj1, curj2));
+            return true;
+        }
+
+        if (curj1 > 0 && curj2 < jug2) {
+            boolean temp;
+            if (curj2 + curj1 <= jug2) {
+                temp = solveDFS(0, curj1 + curj2, jug1, jug2, tx, ty, depth - 1);
+            } else {
+                temp = solveDFS(curj1 - (jug2 - curj2), jug2, jug1, jug2, tx, ty, depth - 1);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+
+        if (curj2 > 0 && curj1 < jug1
+                && solveDFS(Math.min(curj1 + curj2, jug1), curj2 - Math.min(jug1, curj2), jug1, jug2, tx, ty, depth - 1)) {
+            boolean temp;
+            if (curj2 + curj1 <= jug1) {
+                temp = solveDFS(curj1 + curj2, 0, jug1, jug2, tx, ty, depth - 1);
+            } else {
+                temp = solveDFS(jug1, curj2 - (jug1 - curj2), jug1, jug2, tx, ty, depth - 1);
+            }
+            if (temp) {
+                result.push(new Node(curj1, curj2));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    static boolean iterativeDeepeningDFS(int jug1, int jug2, int tx, int ty, int maxDepth) {
+        for (int depth = 0; depth <= maxDepth; depth++) {
+            if (solveDFS(0, 0, jug1, jug2, tx, ty, depth)) {
+                return true;
+            }
+            clearVisited();
+        }
+        return false;
+    }
+
+    static void clearVisited() {
+        for (int i = 0; i < visited.length; i++) {
+            Arrays.fill(visited[i], false);
+        }
+    }
+
+    // function to print the stack in reverse order
+    public static void printReverseStack(Stack<Node> stack) {
+        // base case
+        if (stack.isEmpty())
+            return;
+
+        // create temporary stack
+        Stack<Node> temporaryStack = new Stack<>();
+
+        // copy all the elements from given stack to temporary stack
+        while (stack.size() > 0) {
+            temporaryStack.push(stack.pop());
+        }
+
+        for (Node n : temporaryStack) {
+            System.out.println("(" + n.x + "," + n.y + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+        IDDFSWaterJug obj = new IDDFSWaterJug();
+        boolean res = iterativeDeepeningDFS(4, 3, 2, 0, 10); // Adjust maxDepth as needed
+        if (res) {
+            printReverseStack(result);
+        } else {
+            System.out.println("No solution found within depth limit.");
+        }
+        System.out.println("Total Nodes Visited: " + totalNodesVisited);
+    }
+}
+
+
+
+
+
+
+
+
+
+// EightPuzzle A Star
 
 import java.util.*;
 
@@ -940,6 +1400,389 @@ public class EightPuzzleAStar {
 
 
 
+
+
+
+
+// Shortest Path best first search
+
+import java.util.*;
+
+public class Main {
+    private static class Node implements Comparable<Node> {
+        String name;
+        Map<Node, Integer> neighbours = new HashMap<>();
+        int heuristic; // Straight-line distance to Bucharest
+        Node parent;
+
+        Node(String name, int heuristic) {
+            this.name = name;
+            this.heuristic = heuristic;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            return Integer.compare(this.heuristic, other.heuristic);
+        }
+
+        @Override
+        public String toString() {
+            return name + " (h=" + heuristic + ")";
+        }
+    }
+
+    private Map<String, Node> nodes = new HashMap<>();
+    private Node start;
+    private Node goal;
+
+    public Main(String startName, String goalName) {
+        this.start = new Node(startName, 366); // Heuristic for Arad
+        this.goal = new Node(goalName, 0); // Heuristic for Bucharest
+        nodes.put(startName, start);
+        nodes.put(goalName, goal);
+    }
+
+    public void addEdge(String sourceName, String destName, int distance, int destHeuristic) {
+        Node source = nodes.get(sourceName);
+        Node dest = nodes.computeIfAbsent(destName, k -> new Node(k, destHeuristic));
+        source.neighbours.put(dest, distance);
+    }
+
+    public List<String> findPath() {
+        PriorityQueue<Node> openList = new PriorityQueue<>();
+        Set<Node> closedList = new HashSet<>();
+        openList.add(start);
+
+        while (!openList.isEmpty()) {
+            Node current = openList.poll();
+            System.out.println("Processing node: " + current);
+
+            if (current.equals(goal)) {
+                return constructPath(current);
+            }
+            closedList.add(current);
+
+            for (Map.Entry<Node, Integer> entry : current.neighbours.entrySet()) {
+                Node neighbour = entry.getKey();
+                if (!closedList.contains(neighbour)) {
+                    neighbour.parent = current;
+                    openList.add(neighbour);
+                    System.out.println("Added to open list: " + neighbour);
+                }
+            }
+
+            System.out.println("Open list: " + openList);
+            System.out.println("Closed list: " + closedList);
+        }
+        return null; // No path found
+    }
+
+    private List<String> constructPath(Node node) {
+        LinkedList<String> path = new LinkedList<>();
+        while (node != null) {
+            path.addFirst(node.name);
+            node = node.parent;
+        }
+        return path;
+    }
+
+    public static void main(String[] args) {
+        Main bfs = new Main("Arad", "Bucharest");
+        bfs.addEdge("Arad", "Zerind", 75, 374);
+        bfs.addEdge("Arad", "Timisoara", 118, 329);
+        bfs.addEdge("Arad", "Sibiu", 140, 253);
+        bfs.addEdge("Zerind", "Oradea", 71, 380);
+        bfs.addEdge("Oradea", "Sibiu", 151, 253);
+        bfs.addEdge("Timisoara", "Lugoj", 111, 244);
+        bfs.addEdge("Lugoj", "Mehadia", 70, 241);
+        bfs.addEdge("Mehadia", "Drobeta", 75, 242);
+        bfs.addEdge("Drobeta", "Craiova", 120, 160);
+        bfs.addEdge("Craiova", "Rimnicu Vilcea", 146, 193);
+        bfs.addEdge("Craiova", "Pitesti", 138, 98);
+        bfs.addEdge("Sibiu", "Fagaras", 99, 178);
+        bfs.addEdge("Sibiu", "Rimnicu Vilcea", 80, 193);
+        bfs.addEdge("Rimnicu Vilcea", "Pitesti", 97, 98);
+        bfs.addEdge("Fagaras", "Bucharest", 211, 0);
+        bfs.addEdge("Pitesti", "Bucharest", 101, 0);
+        bfs.addEdge("Bucharest", "Urziceni", 85, 80);
+        bfs.addEdge("Bucharest", "Giurgiu", 90, 77);
+        bfs.addEdge("Urziceni", "Vaslui", 142, 199);
+        bfs.addEdge("Vaslui", "Iasi", 92, 226);
+        bfs.addEdge("Iasi", "Neamt", 87, 234);
+        bfs.addEdge("Urziceni", "Hirsova", 98, 151);
+        bfs.addEdge("Hirsova", "Eforie", 86, 161);
+
+        List<String> path = bfs.findPath();
+        if (path != null) {
+            System.out.println("Path: " + path);
+        } else {
+            System.out.println("No path found.");
+        }
+    }
+}
+
+
+
+
+
+
+
+// shortest path A star
+
+import java.util.*;
+
+public class Main {
+    private static class Node implements Comparable<Node> {
+        String name;
+        Map<Node, Integer> neighbours = new HashMap<>();
+        int g; // Cost from start to this node
+        int h; // Heuristic cost from this node to goal
+        Node parent;
+
+        Node(String name, int h) {
+            this.name = name;
+            this.h = h;
+            this.g = Integer.MAX_VALUE;
+        }
+
+        int f() {
+            return g + h;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            return Integer.compare(this.f(), other.f());
+        }
+
+        @Override
+        public String toString() {
+            return name + " (g=" + g + ", h=" + h + ", f=" + f() + ")";
+        }
+    }
+
+    private Map<String, Node> nodes = new HashMap<>();
+    private Node start;
+    private Node goal;
+
+    public Main(String startName, String goalName) {
+        this.start = new Node(startName, 366); // Heuristic for Arad
+        this.goal = new Node(goalName, 0); // Heuristic for Bucharest
+        nodes.put(startName, start);
+        nodes.put(goalName, goal);
+    }
+
+    public void addEdge(String sourceName, String destName, int distance, int destHeuristic) {
+        Node source = nodes.get(sourceName);
+        Node dest = nodes.computeIfAbsent(destName, k -> new Node(k, destHeuristic));
+        source.neighbours.put(dest, distance);
+    }
+
+    public List<String> findPath() {
+        PriorityQueue<Node> openList = new PriorityQueue<>();
+        Set<Node> closedList = new HashSet<>();
+        start.g = 0;
+        openList.add(start);
+
+        while (!openList.isEmpty()) {
+            Node current = openList.poll();
+            System.out.println("Processing node: " + current);
+
+            if (current.equals(goal)) {
+                return constructPath(current);
+            }
+            closedList.add(current);
+
+            for (Map.Entry<Node, Integer> entry : current.neighbours.entrySet()) {
+                Node neighbour = entry.getKey();
+                int tentativeG = current.g + entry.getValue();
+
+                if (tentativeG < neighbour.g) {
+                    neighbour.parent = current;
+                    neighbour.g = tentativeG;
+                    if (!openList.contains(neighbour) && !closedList.contains(neighbour)) {
+                        openList.add(neighbour);
+                        System.out.println("Added to open list: " + neighbour);
+                    } else if (openList.contains(neighbour)) {
+                        openList.remove(neighbour);
+                        openList.add(neighbour);
+                        System.out.println("Updated node in open list: " + neighbour);
+                    }
+                }
+            }
+
+            System.out.println("Open list: " + openList);
+            System.out.println("Closed list: " + closedList);
+        }
+        return null; // No path found
+    }
+
+    private List<String> constructPath(Node node) {
+        LinkedList<String> path = new LinkedList<>();
+        while (node != null) {
+            path.addFirst(node.name);
+            node = node.parent;
+        }
+        return path;
+    }
+
+    public static void main(String[] args) {
+        Main astar = new Main("Arad", "Bucharest");
+        astar.addEdge("Arad", "Zerind", 75, 374);
+        astar.addEdge("Arad", "Timisoara", 118, 329);
+        astar.addEdge("Arad", "Sibiu", 140, 253);
+        astar.addEdge("Zerind", "Oradea", 71, 380);
+        astar.addEdge("Oradea", "Sibiu", 151, 253);
+        astar.addEdge("Timisoara", "Lugoj", 111, 244);
+        astar.addEdge("Lugoj", "Mehadia", 70, 241);
+        astar.addEdge("Mehadia", "Drobeta", 75, 242);
+        astar.addEdge("Drobeta", "Craiova", 120, 160);
+        astar.addEdge("Craiova", "Rimnicu Vilcea", 146, 193);
+        astar.addEdge("Craiova", "Pitesti", 138, 98);
+        astar.addEdge("Sibiu", "Fagaras", 99, 178);
+        astar.addEdge("Sibiu", "Rimnicu Vilcea", 80, 193);
+        astar.addEdge("Rimnicu Vilcea", "Pitesti", 97, 98);
+        astar.addEdge("Fagaras", "Bucharest", 211, 0);
+        astar.addEdge("Pitesti", "Bucharest", 101, 0);
+        astar.addEdge("Bucharest", "Urziceni", 85, 80);
+        astar.addEdge("Bucharest", "Giurgiu", 90, 77);
+        astar.addEdge("Urziceni", "Vaslui", 142, 199);
+        astar.addEdge("Vaslui", "Iasi", 92, 226);
+        astar.addEdge("Iasi", "Neamt", 87, 234);
+        astar.addEdge("Urziceni", "Hirsova", 98, 151);
+        astar.addEdge("Hirsova", "Eforie", 86, 161);
+
+        // ... add other edges with their respective heuristics ...
+
+        List<String> path = astar.findPath();
+        if (path != null) {
+            System.out.println("Path: " + path);
+        } else {
+            System.out.println("No path found.");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+// N Queens CSP
+import java.util.*;
+
+class NQueensAlgo {
+    static final int N = 4;
+
+    static class State {
+        int[] board;
+        int level;
+        List<State> successors;  
+        boolean isSolved;       
+                                 
+        State(int[] board, int level) {
+            this.board = board.clone();
+            this.level = level;
+            this.successors = new ArrayList<>();
+            this.isSolved = false;
+        }
+
+        List<State> generateSuccessors() {
+            List<State> successors = new ArrayList<>();
+            if (level < N) {
+                for (int col = 0; col < N; col++) {
+                    if (isSafe(board, level, col)) {
+                        board[level] = col;
+                        successors.add(new State(board, level + 1));
+                    }
+                }
+            }
+            return successors;
+        }
+
+        boolean isGoal() {
+            return level == N;
+        }
+
+        boolean isSafe(int[] board, int row, int col) {
+            for (int i = 0; i < row; i++) {
+                if (board[i] == col || Math.abs(board[i] - col) == row - i) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        void printBoard() {
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (board[i] == j) {
+                        System.out.print("Q ");
+                    } else {
+                        System.out.print(". ");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        NQueensAlgo solver = new NQueensAlgo();
+        int[] initialBoard = new int[N];
+        Arrays.fill(initialBoard, -1);
+        State initial = new State(initialBoard, 0);
+        solver.aoStar(initial);
+    }
+
+    void aoStar(State initialState) {
+        PriorityQueue<State> open = new PriorityQueue<>(Comparator.comparingInt(this::heuristic));
+        Set<State> closed = new HashSet<>();
+        open.add(initialState);
+
+        while (!open.isEmpty()) {
+            State current = open.poll();
+            if (current.isGoal()) {
+                System.out.println("Solution found:");
+                current.printBoard();
+                return;
+            }
+
+            closed.add(current);
+            List<State> successors = current.generateSuccessors();
+            current.successors = successors;  // Link successors
+
+            for (State successor : successors) {
+                if (!closed.contains(successor) && !open.contains(successor)) {
+                    open.add(successor);
+                    System.out.println("Intermediate step:");
+                    successor.printBoard();
+                }
+            }
+
+            // Handle "AND" conditions
+            if (current.successors.stream().allMatch(s -> s.isSolved)) {
+                current.isSolved = true;
+            }
+        }
+
+        System.out.println("No solution found.");
+    }
+
+    int heuristic(State state) {
+        return N - state.level;
+    }
+}
+
+
+
+
+
+
+
+
 //AO* 
 
 
@@ -1090,7 +1933,12 @@ public static void main(String[] args)
 
 
 
-//hillclimbing 
+
+
+
+
+
+// hill climbing algorithm manhattan center 
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1208,7 +2056,17 @@ public class ManhattanCentre {
     }
 }
 
-//MissionariesAndCannibals (bredth first search)
+
+
+
+
+
+
+
+
+
+
+//MissionariesAndCannibals (bredth first search) BFS
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1339,9 +2197,16 @@ public class MissionariesAndCannibals {
 }
 
 
-//csp graph color 
 
-// A Java program to implement greedy algorithm for graph coloring
+
+
+
+
+
+
+
+// CSP graph coloring problem 
+
 import java.io.*;
 import java.util.*;
 import java.util.LinkedList;
@@ -1436,7 +2301,13 @@ public class Graph
 }
 
 
-//EightPuzzleBFS
+
+
+
+
+
+
+// EightPuzzle BFS
 
 import java.util.*;
 
@@ -1606,7 +2477,14 @@ public class EightPuzzleBFS {
     }
 }
 
-//insect identification prolog
+
+
+
+
+
+
+
+// insect identification prolog
 
 insect(ant, small, brown, six_legs, no_wings, social, ground).
 insect(ant, small, black, six_legs, no_wings, social, ground).
@@ -1647,7 +2525,16 @@ start :-
     ).
 
 
-//family tree 
+
+
+
+
+
+
+
+
+
+// family tree Prolog 
 
 % Male and Female relationships
 male(varad).
