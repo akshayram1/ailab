@@ -48,7 +48,8 @@ class Point {
     }
 }
 
-public class ManhattanCentre {
+public class hillclimbing 
+ {
     static Set<Point> visited = new HashSet<>();
 
     public static void main(String[] args) {

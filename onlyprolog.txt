@@ -1,0 +1,177 @@
+//insect identification prolog
+
+insect(ant, small, brown, six_legs, no_wings, social, ground).
+insect(ant, small, black, six_legs, no_wings, social, ground).
+insect(bee, small, yellow, six_legs, two_wings, social, flowers).
+insect(butterfly, small, colorful, six_legs, two_wings, solitary, gardens).
+insect(spider, tiny, brown, eight_legs, no_wings, solitary, house).
+insect(ladybug, small, red, six_legs, two_wings, solitary, plants).
+insect(mosquito, small, gray, six_legs, two_wings, solitary, wetlands).
+insect(grasshopper, medium, green, six_legs, two_wings, solitary, grassy_fields).
+insect(beetle, small, black, six_legs, two_wings, solitary, forests).
+insect(praying_mantis, medium, green, six_legs, two_wings, solitary, gardens).
+insect(dragonfly, medium, iridescent, six_legs, two_wings, solitary, ponds).
+insect(centipede, medium, brown, many_legs, no_wings, solitary, dark_damp_places).
+insect(fly, small, black, six_legs, two_wings, solitary, various).
+insect(wasp, small, black_and_yellow, six_legs, two_wings, solitary, nests).
+insect(ant, small, red, six_legs, no_wings, social, ground).
+insect(bumblebee, medium, black_and_yellow, six_legs, two_wings, social, flowers).
+insect(damselfly, small, blue, six_legs, two_wings, solitary, ponds).
+insect(firefly, small, bioluminescent, six_legs, two_wings, solitary, fields).
+insect(earwig, small, dark_brown, six_legs, two_wings, solitary, dark_damp_places).
+
+identify_insect(Color, Size, Legs, Wings, Social, Habitat, Insect) :-
+    insect(Insect, Size, Color, Legs, Wings, Social, Habitat).
+
+start :-
+    write('Welcome to the Insect Identifier!'), nl,
+    write('Please describe the insect you want to identify.'), nl,
+    write('What is the color of the insect? '), read(Color), nl,
+    write('What is the size of the insect (small, medium, large)? '), read(Size), nl,
+    write('How many legs does the insect have? (six_legs, eight_legs or many_legs?)'), read(Legs), nl,
+    write('How many wings does the insect have? (two_wings or no_wings)? '), read(Wings), nl,
+    write('Is the insect social (social or solitary)? '), read(Social), nl,
+    write('Where is the insect commonly found (e.g., "forests," "flowers", "various")? '), read(Habitat), nl,
+    identify_insect(Color, Size, Legs, Wings, Social, Habitat, Insect),
+    (
+        Insect \= [] -> write('Based on your description, the insect may be a '), write(Insect), nl
+        ; write('No insect identified based on your given information'), nl
+    ).
+
+
+//family tree 
+
+% Male and Female relationships
+male(varad).
+father(prashant, varad).
+mother(sarika, varad).
+female(sunanda).
+female(manjusha).
+female(kavita).
+female(madhu).
+female(shruti).
+female(gauri).
+female(riya).
+female(shreya).
+female(jui).
+female(munni).
+female(shraddha).
+female(swapna).
+female(nirmala).
+female(sia).
+
+% Grandparent relationships
+grandfather(purushuttam, varad).
+grandfather(chandrakant, varad).
+grandmother(sunanda, varad).
+grandmother(nirmala, varad).
+
+% Aunt and Uncle relationships
+aunt(manjusha, varad).
+aunt(kavita, varad).
+aunt(madhu, varad).
+aunt(munni, varad).
+aunt(shraddha, varad).
+aunt(swapna, varad).
+uncle(shekhar, varad).
+uncle(mayur, varad).
+uncle(ankush, varad).
+uncle(jai, varad).
+uncle(nikhil, varad).
+uncle(karan, varad).
+
+% Cousin relationships
+cousin(shruti, varad).
+cousin(gauri, varad).
+cousin(riya, varad).
+cousin(shreya, varad).
+cousin(jui, varad).
+cousin(aniket, varad).
+cousin(nimish, varad).
+cousin(arnav, varad).
+
+% Third aunt's family
+husband(nikhil, shreya).
+husband(karan, jui).
+child(sia, shreya).
+
+% Parent relationships
+parent(prashant, varad).
+parent(sarika, varad).
+
+% Niece relationships
+niece(sia, varad).
+
+% Sibling relationships
+sibling(shruti, gauri).
+sibling(jui, shreya).
+
+% Marital relationships
+married(prashant, sarika).
+married(nikhil, shreya).
+married(karan, jui).
+married(shekhar, manjusha).
+married(shekhar, madhu).
+married(ankush, shraddha).
+married(jai, swapna).
+married(munni, mayur).
+
+% Additional rules for family relationships
+mother_of(X, Y) :- mother(X, Y).
+father_of(X, Y) :- father(X, Y).
+sister_of(X, Y) :- female(X), sibling(X, Y).
+grandparent_of(X, Y) :- (grandfather(X, Y); grandmother(X, Y)).
+aunt_of(X, Y) :- female(X), (sister_of(X, Z), parent_of(Z, Y); married(X, Z), sibling(Z, W), parent_of(W, Y)).
+uncle_of(X, Y) :- male(X), (brother_of(X, Z), parent_of(Z, Y); married(X, Z), sibling(Z, W), parent_of(W, Y)).
+cousin_of(X, Y) :-(aunt_of(Z, Y); uncle_of(Z, Y)), parent(Z, X), X \= Y.
+
+
+//familyTree 2 
+
+% Male and Female relationships
+male(varad).
+male(prashant).
+male(shekhar).
+female(sarika).
+female(manjusha).
+female(kavita).
+
+% Parent relationships
+parent(prashant, varad).
+parent(sarika, varad).
+parent(prashant, kavita).
+parent(sarika, kavita).
+parent(shekhar, manjusha).
+parent(shekhar, prashant).
+
+% Sibling relationships
+sibling(X, Y) :- parent(Z, X), parent(Z, Y), X \= Y.
+
+% Grandparent relationships
+grandparent(X, Y) :- parent(X, Z), parent(Z, Y).
+
+% Aunt and Uncle relationships
+aunt(X, Y) :- female(X), sibling(X, Z), parent(Z, Y).
+uncle(X, Y) :- male(X), sibling(X, Z), parent(Z, Y).
+
+% Cousin relationships
+cousin(X, Y) :- parent(Z, X), sibling(Z, W), parent(W, Y).
+
+% Additional rules for family relationships
+mother_of(X, Y) :- female(X), parent(X, Y).
+father_of(X, Y) :- male(X), parent(X, Y).
+sister_of(X, Y) :- female(X), sibling(X, Y).
+brother_of(X, Y) :- male(X), sibling(X, Y).
+grandparent_of(X, Y) :- grandparent(X, Y).
+aunt_of(X, Y) :- aunt(X, Y).
+uncle_of(X, Y) :- uncle(X, Y).
+cousin_of(X, Y) :- cousin(X, Y).
+
+% Define mother and father predicates
+mother(sarika, varad).
+father(prashant, varad).
+
+
+//?- parent(Who, varad).
+//?- sibling(varad, Who).
+//?- grandparent(Who, varad).
