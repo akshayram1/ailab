@@ -1,4 +1,4 @@
-/* Informed strategies O(b^d).  f(n)=h(n) */
+/* BestFirstSSlidingPuzzle Informed strategies O(b^d).  f(n)=h(n) */
 package akshay;
 import java.util.*;
 
