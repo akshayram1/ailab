@@ -1,4 +1,4 @@
-// AITicTacToe (AI)
+// AI TicTacToe (AI)
 
 import java.util.Scanner;
 
@@ -173,7 +173,10 @@ public class TicTacToe {
 
 
 
-//NON-AI TicTacToe
+
+
+
+//  NON-AI TicTacToe
 
 import java.util.Scanner;
 
@@ -356,7 +359,11 @@ public class NonAiTicTacToe {
 
 
 
-//BFSWaterJug (uninfomred)
+
+
+
+
+// BFSWaterJug (uninfomred)
 
 
 import java.util.*;
@@ -495,7 +502,14 @@ public class BFSWaterJug {
     }
 }
 
-//dfs (uninfomred)
+
+
+
+
+
+
+
+//DFS Water Jug (uninfomred)
 
 import java.util.*;
 
@@ -625,7 +639,14 @@ public class DFSWaterJug {
 
 
 
-//BestfirstSearch 8 puzzle (informed)
+
+
+
+
+
+
+
+// Best first Search 8 puzzle (informed)
 
 
 import java.util.*;
@@ -783,7 +804,12 @@ public class EightPuzzleBestFirst {
 
 
 
-//BFS DFS Monkey Banana Problem
+
+
+
+
+//BFS & DFS Monkey Banana Problem
+
 import java.util.*;
 
 class State {
@@ -934,10 +960,16 @@ public class MonkeyBananaProblem {
 
 
 
-// Depth limited search water jug
+
+
+
+
+
+// DLS Depth Limited Search Algorithm Water Jug
+
 import java.util.*;
 
-public class IDSWaterJug {
+public class DLSWaterJug {
 
     public static int total = 0;
 
@@ -952,7 +984,7 @@ public class IDSWaterJug {
     }
 
     static Stack<Node> result = new Stack<Node>();
-    static boolean[][] m;
+    static boolean[][] m = new boolean[5][5];
     static int found = 0;
 
     static boolean solveDLS(int curj1, int curj2, int jug1, int jug2, int tx, int ty, int depth, int limit) {
@@ -1035,19 +1067,6 @@ public class IDSWaterJug {
         return false;
     }
 
-    // Iterative Deepening Search
-    static boolean iterativeDeepeningSearch(int jug1, int jug2, int tx, int ty) {
-        int depth = 0;
-        while (true) {
-            // Reset visited array for each depth level
-            m = new boolean[5][5];
-            if (solveDLS(0, 0, jug1, jug2, tx, ty, 0, depth)) {
-                return true;
-            }
-            depth++;
-        }
-    }
-
     // function to print the stack in reverse order
     public static void printReverseStack(Stack<Node> stack) {
         // base case
@@ -1068,12 +1087,13 @@ public class IDSWaterJug {
     }
 
     public static void main(String[] args) {
-        IDSWaterJug obj = new IDSWaterJug();
-        boolean res = iterativeDeepeningSearch(4, 3, 2, 0);
+        DLSWaterJug obj = new DLSWaterJug();
+        int depthLimit = 5; // Set a reasonable depth limit
+        boolean res = solveDLS(0, 0, 4, 3, 2, 0, 0, depthLimit);
         if (res) {
             printReverseStack(result);
         } else {
-            System.out.println("Solution not found.");
+            System.out.println("Solution not found within depth limit.");
         }
         System.out.println("Total Nodes: " + total);
     }
@@ -1081,7 +1101,11 @@ public class IDSWaterJug {
 
 
 
-// iterative deepning search water jug problem
+
+
+
+// iterative deepning search (IDS) water jug problem
+
 import java.util.*;
 
 public class IDDFSWaterJug {
@@ -1163,7 +1187,6 @@ public class IDDFSWaterJug {
         return false;
     }
 
-    // Iterative Deepening DFS
     static boolean iterativeDeepeningDFS(int jug1, int jug2, int tx, int ty, int maxDepth) {
         for (int depth = 0; depth <= maxDepth; depth++) {
             if (solveDFS(0, 0, jug1, jug2, tx, ty, depth)) {
@@ -1214,7 +1237,12 @@ public class IDDFSWaterJug {
 
 
 
-//EightPuzzleAStar
+
+
+
+
+
+// EightPuzzle A Star
 
 import java.util.*;
 
@@ -1372,7 +1400,12 @@ public class EightPuzzleAStar {
 
 
 
+
+
+
+
 // Shortest Path best first search
+
 import java.util.*;
 
 public class Main {
@@ -1490,7 +1523,12 @@ public class Main {
 
 
 
+
+
+
+
 // shortest path A star
+
 import java.util.*;
 
 public class Main {
@@ -1628,6 +1666,9 @@ public class Main {
 
 
 
+
+
+
 // N Queens CSP
 import java.util.*;
 
@@ -1734,6 +1775,9 @@ class NQueensAlgo {
         return N - state.level;
     }
 }
+
+
+
 
 
 
@@ -1889,7 +1933,12 @@ public static void main(String[] args)
 
 
 
-//hillclimbing 
+
+
+
+
+
+// hill climbing algorithm manhattan center 
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -2007,7 +2056,17 @@ public class ManhattanCentre {
     }
 }
 
-//MissionariesAndCannibals (bredth first search)
+
+
+
+
+
+
+
+
+
+
+//MissionariesAndCannibals (bredth first search) BFS
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2138,9 +2197,16 @@ public class MissionariesAndCannibals {
 }
 
 
-//csp graph color 
 
-// A Java program to implement greedy algorithm for graph coloring
+
+
+
+
+
+
+
+// CSP graph coloring problem 
+
 import java.io.*;
 import java.util.*;
 import java.util.LinkedList;
@@ -2235,7 +2301,13 @@ public class Graph
 }
 
 
-//EightPuzzleBFS
+
+
+
+
+
+
+// EightPuzzle BFS
 
 import java.util.*;
 
@@ -2405,7 +2477,14 @@ public class EightPuzzleBFS {
     }
 }
 
-//insect identification prolog
+
+
+
+
+
+
+
+// insect identification prolog
 
 insect(ant, small, brown, six_legs, no_wings, social, ground).
 insect(ant, small, black, six_legs, no_wings, social, ground).
@@ -2446,7 +2525,16 @@ start :-
     ).
 
 
-//family tree 
+
+
+
+
+
+
+
+
+
+// family tree Prolog 
 
 % Male and Female relationships
 male(varad).
